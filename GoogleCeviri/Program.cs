@@ -1,14 +1,17 @@
 ﻿using System;
 using System.IO;
-using System.Threading.Tasks;
+using Google.Cloud.Translation.V2;
 
 namespace GoogleCeviri
 {
     class Program
     {
+        static String KaynakDil = "en";
+        static String HedefDil = "de";
 
         readonly static String KaynakDosya = "/Users/mustafa/Documents/Projelerim/Xamarin/Orwino/Localization/AppResources.resx";
-        readonly static String HedefDosya = "/Users/mustafa/Documents/Projelerim/Xamarin/Orwino/Localization/AppResources.resx.txt";
+        readonly static String HedefDosya = "/Users/mustafa/Documents/Projelerim/Xamarin/Orwino/Localization/AppResources." + HedefDil + ".resx";
+        readonly static string credential_path = System.IO.Path.Combine("/Users/mustafa/Library/Mobile Documents/com~apple~CloudDocs/Apple Sertifikalar/MuNaTek Şirket Hesabı ile oluşturulan Sertifikalar/Google Ceviri Servis Hesabi/ceviri-316608-d8775251cb06.json");
 
 
         StreamWriter Dosya;
@@ -19,6 +22,8 @@ namespace GoogleCeviri
             using StreamWriter file = new(HedefDosya, append: false);
             file.Close();
             CeviriYap();
+            Console.WriteLine("TAMAMLANDI");
+
         }
 
 
@@ -46,16 +51,18 @@ namespace GoogleCeviri
                     {
                         string cevrilecekdeger = line.Substring(7, line.IndexOf("</value>") - 7);
 
-                        string cevirilmisdeger = "AAA" + cevrilecekdeger + "BBB";
+                        string cevirilmisdeger = GoogleCevir(cevrilecekdeger);
 
-                        DosyayaYaz("<value>"+cevirilmisdeger +"</value>") ;
+
+
+                        DosyayaYaz("<value>" + cevirilmisdeger + "</value>");
 
 
 
                     }
                     else
                     {
-                        DosyayaYaz(line); 
+                        DosyayaYaz(line);
 
                     }
 
@@ -74,16 +81,31 @@ namespace GoogleCeviri
             file.Close();
             System.Console.WriteLine("There were {0} lines.", counter);
             // Suspend the screen.  
-            System.Console.ReadLine();
+            //  System.Console.ReadLine();
 
         }
 
         async public static void DosyayaYaz(string satir)
         {
-            using StreamWriter file = new("/Users/mustafa/Documents/Projelerim/Xamarin/Orwino/Localization/AppResources.resx.txt", append: true);
+            using StreamWriter file = new(HedefDosya, append: true);
             await file.WriteLineAsync(satir);
 
         }
+
+
+        public static string GoogleCevir(string metin)
+        {
+
+            System.Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credential_path);
+            TranslationClient client = TranslationClient.Create();
+
+            string ceviri_sonuc = client.TranslateText(metin, HedefDil, KaynakDil).TranslatedText;
+
+            return ceviri_sonuc;
+
+
+        }
+
 
 
     }

@@ -5,4 +5,11 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Google.Apis.Translate.v2" />
+    <None Remove="Google.Cloud.Translation.V2" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.Cloud.Translation.V2" Version="2.1.0" />
+  </ItemGroup>
 </Project>

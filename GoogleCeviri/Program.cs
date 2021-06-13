@@ -7,7 +7,7 @@ namespace GoogleCeviri
     class Program
     {
         static String KaynakDil = "en";
-        static String HedefDil = "de";
+        static String HedefDil = "ar";
 
         readonly static String KaynakDosya = "/Users/mustafa/Documents/Projelerim/Xamarin/Orwino/Localization/AppResources.resx";
         readonly static String HedefDosya = "/Users/mustafa/Documents/Projelerim/Xamarin/Orwino/Localization/AppResources." + HedefDil + ".resx";
@@ -40,7 +40,6 @@ namespace GoogleCeviri
             while ((line = file.ReadLine()) != null)
             {
                 line = line.Trim();
-                System.Console.WriteLine(line);
 
 
 
@@ -56,6 +55,7 @@ namespace GoogleCeviri
 
 
                         DosyayaYaz("<value>" + cevirilmisdeger + "</value>");
+                        System.Console.WriteLine(cevrilecekdeger + " >> " + cevirilmisdeger);
 
 
 

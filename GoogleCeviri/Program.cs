@@ -7,11 +7,16 @@ namespace GoogleCeviri
     class Program
     {
         static String KaynakDil = "en";
-        static String HedefDil = "ar";
+        static String HedefDil = "ru";
 
         readonly static String KaynakDosya = "/Users/mustafa/Documents/Projelerim/Xamarin/Orwino/Localization/AppResources.resx";
         readonly static String HedefDosya = "/Users/mustafa/Documents/Projelerim/Xamarin/Orwino/Localization/AppResources." + HedefDil + ".resx";
         readonly static string credential_path = System.IO.Path.Combine("/Users/mustafa/Library/Mobile Documents/com~apple~CloudDocs/Apple Sertifikalar/MuNaTek Şirket Hesabı ile oluşturulan Sertifikalar/Google Ceviri Servis Hesabi/ceviri-316608-d8775251cb06.json");
+
+        readonly static String KaynakDosyaPlaz = "/Users/mustafa/Downloads/PulAZ.EN.txt";
+        readonly static String HedefDosyaPlaz = "/Users/mustafa/Downloads/PulAZ." + HedefDil.ToUpper() + ".txt";
+
+
 
 
         StreamWriter Dosya;
@@ -19,15 +24,21 @@ namespace GoogleCeviri
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-            using StreamWriter file = new(HedefDosya, append: false);
-            file.Close();
-            CeviriYap();
+           // using StreamWriter file = new(HedefDosya, append: false);
+           // file.Close();
+           // CeviriYapOrwino(KaynakDosya, HedefDosya);
+
+
+            using StreamWriter filePlz = new(HedefDosyaPlaz, append: false);
+            filePlz.Close();
+
+            CeviriYapPLAZ(KaynakDosyaPlaz, HedefDosyaPlaz);
             Console.WriteLine("TAMAMLANDI");
 
         }
 
 
-        public static void CeviriYap()
+        public static void CeviriYapOrwino(String pKaynakDosya, string pHedefDosya)
         {
 
             int counter = 0;
@@ -36,7 +47,7 @@ namespace GoogleCeviri
 
             // Read the file and display it line by line.  
             System.IO.StreamReader file =
-                new System.IO.StreamReader(@KaynakDosya);
+                new System.IO.StreamReader(pKaynakDosya);
             while ((line = file.ReadLine()) != null)
             {
                 line = line.Trim();
@@ -54,7 +65,7 @@ namespace GoogleCeviri
 
 
 
-                        DosyayaYaz("<value>" + cevirilmisdeger + "</value>");
+                        DosyayaYaz(pHedefDosya, "<value>" + cevirilmisdeger + "</value>");
                         System.Console.WriteLine(cevrilecekdeger + " >> " + cevirilmisdeger);
 
 
@@ -62,14 +73,14 @@ namespace GoogleCeviri
                     }
                     else
                     {
-                        DosyayaYaz(line);
+                        DosyayaYaz(pHedefDosya, line);
 
                     }
 
                 }
                 else
                 {
-                    DosyayaYaz(line);
+                    DosyayaYaz(pHedefDosya, line);
 
                 }
 
@@ -85,9 +96,61 @@ namespace GoogleCeviri
 
         }
 
-        async public static void DosyayaYaz(string satir)
+
+        public static void CeviriYapPLAZ(String pKaynakDosyaPlaz, string pHedefDosyaPlaz)
         {
-            using StreamWriter file = new(HedefDosya, append: true);
+
+            int counter = 0;
+            string line;
+
+            // Read the file and display it line by line.  
+            System.IO.StreamReader file =
+                new System.IO.StreamReader(pKaynakDosyaPlaz);
+            while ((line = file.ReadLine()) != null)
+            {
+                line = line.Trim();
+
+
+
+                if (line.Contains(" = "))
+                {
+
+
+                    string cevrilecekdeger = line.Substring(0, line.IndexOf("=") - 1).Trim().Remove(0, 1).Substring(0,(line.Substring(0, line.IndexOf("=") - 1).Trim().Remove(0, 1).Length-1));
+
+                        string cevirilmisdeger = GoogleCevir(cevrilecekdeger);
+
+
+                        DosyayaYaz(pHedefDosyaPlaz, line.Substring(0, line.IndexOf("=")+1) + " \"" +cevirilmisdeger + "\";");
+                        System.Console.WriteLine(cevrilecekdeger + " >> " + cevirilmisdeger);
+
+
+
+                 
+
+                }
+                else
+                {
+                    DosyayaYaz(pHedefDosyaPlaz, line);
+
+                }
+
+
+                counter++;
+            }
+
+            file.Close();
+            System.Console.WriteLine("There were {0} lines.", counter);
+            // Suspend the screen.  
+            //  System.Console.ReadLine();
+
+        }
+
+
+
+        async public static void DosyayaYaz(String pHdefDosya, string satir)
+        {
+            using StreamWriter file = new(pHdefDosya, append: true);
             await file.WriteLineAsync(satir);
 
         }
